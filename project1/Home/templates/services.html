@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Services{% endblock title %}
+
+{% block body %}
+This is Services Block
+<div class='container'>
+
+  <form method="" action="/output">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="buildno" class="form-label">Enter Build Number</label>
+      <input type="text" class="form-control" id="buildno" name="buildno" placeholder="Enter Build Number" />
+    </div>
+    <div class="form-group">
+      <label for="ipaddress" class="form-label">Enter IP address</label>
+      <input type="text" class="form-control" id="email" name="ipaddress" placeholder="Enter IP address" />
+    </div></br>
+
+    {% comment %} <a href="services"> Submit</a> {% endcomment %}
+    <button class="btn btn-primary" type="submit">GET</button>
+    {% comment %} <div class="card-text"><a href="{% url 'services' %}?message=Hi Welcome to Python Guides">Link To Home
+        Page</a></div {% endcomment %} 
+    {% comment %} <div class="card-text"><a href="{% url 'output' %}?message={{buildno}}">Link To  Home Page</a> {% endcomment %}
+
+  </form>
+</div>
+
+
+
+{% endblock body %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}WEB{% endblock title %}
+
+{% block body %}
+Hi Shubham - web services list
+<div class='container content'>
+  <table class="table">
+    <thead class="thead-dark">
+        {% for Streamsb1 in Streamsbeta1 %}
+        {% for Streamsb2 in Streamsbeta2 %}
+        {% for Admin5b1 in Admin5beta1 %}
+        <tr>
+            <th scope="col">WEB</th>
+            <th scope="col">Beta-1</th>
+            <th scope="col">Beta-2</th>
+            <th scope="col">Beta-3</th>
+        </tr>
+        </thead>
+        <tbody>        
+        <tr>
+            <th scope="row">{{ Streamsb1.service_name }}</th>
+            {% comment %} <td><a href="update/{{ x.id }}">{{ x.id }}</td> {% endcomment %}
+            <td>{{ Streamsb1.ip1 }} {{ Streamsb1.ip2 }} {{ Streamsb1.ip3 }} {{ Streamsb1.ip4 }} {{ Streamsb1.ip5 }} </td>
+            <td>{{ Streamsb2.ip1 }} {{ Streamsb2.ip2 }} {{ Streamsb2.ip3 }} {{ Streamsb2.ip4 }} {{ Streamsb2.ip5 }}</td>   
+        </tr>
+
+        <tr>
+            <th scope="row">{{ Admin5b1.service_name }}</th>
+            <td>{{ Admin5b1.ip1 }} {{ Admin5b1.ip2 }} {{ Admin5b1.ip3 }} {{ Admin5b1.ip4 }} {{ Admin5beta.ip5 }}</td> 
+            <td>10.60.48.105</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <th scope="row">Partner portal</th>
+            <td>10.60.48.106</td>
+            <td>10.60.48.105</td>
+            <td>-</td>
+        </tr>
+
+  
+        {% endfor %}
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+
+
+
+</div>
+
+{% endblock body %}

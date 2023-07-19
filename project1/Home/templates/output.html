@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Output{% endblock title %}
+
+{% block body %}
+
+<div class="container">
+</br></br></br></br>
+Build Number is : <b>{{msg1}}</b> </br>
+Host Ip is :  <b>{{msg2}}</b></br></br></br>
+<h2> Please copy this URL : <h2></br>
+
+<p>(ansible-playbook streams.yml -u wsadmin --ask-pass -v --extra-vars "host={{msg2}} url=http://jfrog.beta-wspbx.com:8082/artifactory/QA-Releases/2022-03-22/Streams/{{msg1}}/worldsmart_desk.war";)</p>
+
+
+
+</div>
+
+
+ {% comment %} <br>
+ <div class="container w-50">
+     <div class="card bg-light text-dark">
+         <h5 class="card-header bg-dark text-light">Index Page</h5>
+         <div class="card-body">
+             <div class="card-text"><a href="{% url 'output' %}?message=Hi Welcome to Python Guides">Link To Home Page</a></div>
+         </div>
+     </div>
+ </div> {% endcomment %}
+
+{% endblock body %}
+
+

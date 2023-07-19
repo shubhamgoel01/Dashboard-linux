@@ -1,0 +1,15 @@
+<h1>Update record</h1>
+
+<form action="updaterecord/{{ updateobj.id }}" method="post">
+{% csrf_token %}
+Name:<br>
+<input name="name" value="{{ updateobj.name }}">
+<br><br>
+Beta:<br>
+<input name="beta" value="{{ updateobj.beta }}">
+<br><br>
+Production:<br>
+<input name="production" value="{{ updateobj.production }}">
+<br><br>
+<input type="submit" value="Submit">
+</form>

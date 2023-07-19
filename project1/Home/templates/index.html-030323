@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock title %}
+
+{% block body %}<br><br>
+<div class="container">
+
+ {% comment %} This is my bodyblock <b>{{build}}</b> </br>
+ This is my bodyblock <b>{{ip}}</b> {% endcomment %}
+ <h4>svn://192.168.1.109/Releases/10.x.0.x/service_name/Binaries/
+ <br>This <strong>Weekend</strong> RRF Version is :  11.44.0.0 & 11.44.0.2 & 11.44.0.4
+
+ {% for x in data %}
+ <div class="col-md-4">
+     <a href="{{ x.photo.url }}">
+       <img src="{{ x.photo.url }}" alt="Lights" style="width:100%">
+       <div class="caption">
+         <p>{{ x.title }}</p>
+       </div>
+     </a>
+ </div>
+ {% endfor %}
+
+
+ <h3>----------------------------------------------------------------</h3>
+ <b>UPDATE : </b> </br>
+NO Need to Refresh the WEB/PBX PAGE </br>
+{% if day_left < 30 %}  
+<div style="font-size: 125%" class="ser_nrun">{{ day_left }}  days</div> left to expired this <b>clients.crt</b> certificate
+{% endif %}
+
+</div>
+
+{% comment %} The page will be reloaded in 12 hours {% endcomment %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js">
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    setTimeout(function () {
+      location.reload(true);
+    }, 43200000);
+  });
+</script>
+{% endblock body %}
+
+

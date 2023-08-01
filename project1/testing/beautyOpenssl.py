@@ -9,16 +9,16 @@ def update():
         print("The news are as follow :-\n")
         
         soup=BeautifulSoup(resp.text,'html.parser')        
-        # l=soup.find("div",{"class":"blog-index"})
-        l=soup.find("table")
-        m = l.findAll("tr")[2]
-        n = m.findAll("td")[2]        
-        print(n.text)
+        l=soup.find("div",{"class":"blog-index"})
+        # l=soup.find("article")
+        m = l.findAll("table")[0]
+        n = m.findAll("td")[6]        
+        o = m.findAll("tr")[2]        
+        print(o.text)
         # m = l.findAll("tr")[5]
         # print(m.text)           
     else:
         print('Error: %s' % resp.status_code)   
         
-
-		
+	
 update()

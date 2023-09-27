@@ -139,7 +139,7 @@ def updaterecordNewUpdateInfo(request, id):
 
 # ----------------------------------------------------end----
 
-def about(request):
+def IPTables(request):
     iptable_objs = IPTable.objects.filter(service_name="IPTables")
     base_url = "http://nagios.beta-wspbx.com/nagios/cgi-bin/statusjson.cgi?query=service"
 
@@ -169,7 +169,7 @@ def about(request):
     context = {
         'url_info_list': url_info_list,  # Pass the list in the context
     }
-    return render(request, 'about.html', context)
+    return render(request, 'IPTables.html', context)
 
 def services(request):
    build1=request.GET.get('buildno')

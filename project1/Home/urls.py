@@ -6,7 +6,7 @@ from Home import views
 
 urlpatterns = [
     path("", views.index, name='index' ),
-    path("about", views.about, name='about' ),
+    path("IPTables", views.IPTables, name='IPTables' ),
     path("services", views.services, name='services'),
     path("web", views.web, name='web' ),
     path("pbx", views.pbx, name='pbx' ),

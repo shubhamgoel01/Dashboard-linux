@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from datetime import date, datetime
-from Home.models import Contact, WebBeta1, WebBeta2, WebBeta3,WebBeta4,NewUpdateInfo
+from Home.models import WebBeta1, WebBeta2, WebBeta3,WebBeta4,NewUpdateInfo, RRFImage
 from django.contrib import messages
 import requests
 from requests.auth import HTTPBasicAuth
@@ -13,69 +13,50 @@ import json
 from django.urls import reverse
 import numpy as np
 from bs4 import BeautifulSoup
-
+import subprocess
+from datetime import date
+import time
+import datetime
 
 # Create your views here.
 
 
 def index(request):
-    mycontact = Contact.objects.all().values()    
-    print(mycontact)
-    # print(type(mycontact))   // django.db.models.query.QuerySet
-    tname = "" 
-    tmail = "" 
-    for x in mycontact:
-        tname += x["name"]
-        tmail += x["email"]
-    
-    # print(type(tmail))   // str
+    crt_day = " /usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk '{print $2}'"
+    crt_day_result = subprocess.check_output(crt_day, shell=True)
+    crt_day_1 = crt_day_result.decode('utf-8').rstrip()
+    crt_year = "/usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk '{print $4}'"  # Replace with your desired command
+    crt_year_result = subprocess.check_output(crt_year, shell=True)
+    crt_year_1 = crt_year_result.decode('utf-8').rstrip()
+    month_dict = {'Jan': '1', 'Feb': '2', 'Mar': '3', 'Apr': '4', 'May': '5', 'Jun': '6', 'Jul': '7', 'Aug': '8', 'Sep': '9', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
+    crt_month = "/usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk -F '=' '{print $2}' | cut -d '2' -f1 "  # Replace with your desired command
+    crt_month_result = subprocess.check_output(crt_month, shell=True)
+    crt_month_tmp = crt_month_result.decode('utf-8').rstrip()
+    if crt_month_tmp in month_dict.keys():
+        crt_month_1 = month_dict[crt_month_tmp]
+    else:
+        print("issue in crt_month_tmp")
+
+    m1 = int(crt_month_1)
+    d1 = int(crt_day_1)
+    y1 = int(crt_year_1)
+    current_time = datetime.datetime.now()
+    crt_year_2 = current_time.year
+    crt_month_2 = current_time.month
+    crt_day_2 = current_time.day
+
+    date1 = date(y1, m1, d1)
+    date2 = date(crt_year_2, crt_month_2, crt_day_2)
+    c = (date1-date2).days
+    print("days_left",c)
+
+    data = RRFImage.objects.all()
     context = {
-        'build':"build-Number",
-        'ip':"IP",
-        'out1':tname,
-        'out2':tmail,
-        'mycontact':mycontact,
-    }  
-    # return HttpResponse(output)
+             'day_left':c,
+             'data' : data
+    }
     return render(request,'index.html',context)
 
-def add(request):
-    # template = loader.get_template('add.html')
-    # return HttpResponse(template.render({}, request))
-   return render(request, 'add.html')
-
-def addrecord(request):
-    x = request.POST['name']
-    y = request.POST['email']
-    print("yssssss",x,y)
-    print(type(x))
-    contact = Contact(name=x, email=y)
-    contact.save()
-    return HttpResponseRedirect(reverse('index'))
-
-def delete(request, id):
-    print("inside del function ",id)
-    delcontact = Contact.objects.get(id=id)
-    delcontact.delete()
-    return HttpResponseRedirect(reverse('index'))
-
-def update(request, id):
-  updatecontact = Contact.objects.get(id=id)
-#   print(updatecontact)
-  template = loader.get_template('update.html')
-  context = {
-    'updcontact': updatecontact,
-  }
-  return HttpResponse(template.render(context, request))
-
-def updaterecord(request, id):
-  name = request.POST['name']
-  email = request.POST['email']
-  member = Contact.objects.get(id=id)
-  member.name = name
-  member.email = email
-  member.save()
-  return HttpResponseRedirect(reverse('index'))
 
 def output(request):
    msg1=request.GET.get('buildno')
@@ -89,7 +70,7 @@ def output(request):
 # --------------------------------------New ---------------
 def checkupdate(request):  
     result_httpd = update_httpd("https://httpd.apache.org/download.cgi")
-    result_openssl = update_openssl("https://www.openssl.org/")
+    result_openssl = update_openssl("https://www.openssl.org/source/")
     result_php = update_php("https://www.php.net/downloads.php")
     result_Hadoop = update_Hadoop("https://hadoop.apache.org/release.html")
     result_ZooKeeper = update_ZooKeeper("https://zookeeper.apache.org/releases.html")
@@ -180,47 +161,11 @@ def services(request):
    print(build1,build2)
    return render(request, 'services.html',{'build1':build1,'build2':build2})
 
-def pbx(request):   
-    service_name_wsumserver = 'wsumserver'
-    wsumserver_instance_ip = ['10.30.48.33','10.30.48.60','10.30.48.194']    
-    wsumserver33 = UrlReturn(service_name_wsumserver, wsumserver_instance_ip[0])
-    result_wsumserver33= webnagios(wsumserver33)        
-    wsumserver60 = UrlReturn(service_name_wsumserver, wsumserver_instance_ip[1])
-    result_wsumserver60= webnagios(wsumserver60)        
-    wsumserver194 = UrlReturn(service_name_wsumserver, wsumserver_instance_ip[2])
-    result_wsumserver194= webnagios(wsumserver194)
-       
-    # Add WSICP service  
-    service_name_WSICP = 'WSICP'
-    WSICP_instance_ip = ['10.30.48.148','10.30.48.166','10.30.48.174']    
-    WSICP148 = UrlReturn(service_name_WSICP, WSICP_instance_ip[0])
-    result_WSICP148= webnagios(WSICP148)
-    WSICP166 = UrlReturn(service_name_WSICP, WSICP_instance_ip[1])
-    result_WSICP166= webnagios(WSICP166)
-    
-    context = {
-    'result_wsumserver33':result_wsumserver33, 
-    'result_wsumserver60':result_wsumserver60, 
-    'result_wsumserver194':result_wsumserver194, 
-    'result_WSICP148':result_WSICP148, 
-    'result_WSICP166':result_WSICP166, 
-    }     
-    return render(request, 'pbx.html',context)
-
-def contact(request):
-    if request.method == "POST":
-        Name = request.POST.get('name')            
-        Email = request.POST.get('email')
-        contact = Contact(name=Name,email=Email,date=datetime.today())
-        contact.save()
-        messages.success(request, 'Your message has been sent.')
-    return render(request,'contact.html')
-
-def web(request):
+def pbx(request):
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-    WebB1 = WebBeta1.objects.all().values()   
-    print("------------------Query set output --------------------")    
-    print(WebB1)    
+    WebB1 = WebBeta2.objects.all().values()   
+    # print("------------------Query set output  PBX--------------------")    
+    # print(WebB1)    
     # Converted Queryset obj to list
     i = 0
     data = []
@@ -229,8 +174,118 @@ def web(request):
             tmp = list((WebB1[i]).values())
             i = i + 1
             data.append(tmp)
-    print("\n\n -------------------1 -------------")
-    print(data)
+    # print("\n\n -----------Converted Queryset obj to list PBX OUTPUT -------------")
+    # print(data)
+    # Assigned service data(status,ip,servicename)  into 3 list accordingly
+    counter1 = 0    #  number of object /service in WebB1
+    service_status = []
+    service_status_ip = []
+    service_status_name = []
+    for x in data:
+        while counter1 < len(data):
+            service_name = data[counter1][1]
+            service_ip = data[counter1][2:]           
+            counter1 = counter1 + 1
+            # creating URL for API Hit in nagios
+            if (service_ip[0] != '' ):
+                serviceurl1 = UrlReturn(service_name, service_ip[0])                
+                res1 = webnagios(serviceurl1)                
+            else:
+                res1 = 'Absent'
+                
+            if (service_ip[1] != '' ):
+                serviceurl2 = UrlReturn(service_name, service_ip[1])    
+                # print("--serviceurl2 printing---",serviceurl2)            
+                res2 = webnagios(serviceurl2)                
+            else:
+                res2 = 'Absent'
+            if (service_ip[2] != '' ):
+                serviceurl3 = UrlReturn(service_name, service_ip[2])                
+                res3 = webnagios(serviceurl3)                
+            else:
+                res3 = 'Absent'
+            if (service_ip[3] != '' ):
+                serviceurl4 = UrlReturn(service_name, service_ip[3])                
+                res4 = webnagios(serviceurl4)                
+            else:
+                res4 = 'no'
+            if (service_ip[4] != '' ):
+                serviceurl5 = UrlReturn(service_name, service_ip[4])                
+                res5 = webnagios(serviceurl5)                
+            else:
+                res5 = 'no'
+                
+            # serviceurl1 = UrlReturn(service_name, service_ip[0])
+            # serviceurl2 = UrlReturn(service_name, service_ip[1])
+            # serviceurl3 = UrlReturn(service_name, service_ip[2])
+            # d = UrlReturn(service_name, service_ip[3])     
+            # e = UrlReturn(service_name, service_ip[4])
+            # NOTE: write function to check IP is pattern or not , if not , dont run function
+            # res1 = webnagios(serviceurl1)
+            # res2 = webnagios(serviceurl2)
+            # res3 = webnagios(serviceurl3)
+            # res4 = webnagios(d) 
+            # res4 = webnagios(e)
+            service_status.append(res1)
+            service_status_ip.append(service_ip[0])
+            service_status_name.append(service_name)
+            service_status.append(res2)
+            service_status_ip.append(service_ip[1])
+            service_status_name.append(service_name)
+            service_status.append(res3)
+            service_status_ip.append(service_ip[2])
+            service_status_name.append(service_name)
+            service_status.append(res4)
+            service_status_ip.append(service_ip[3])
+            service_status_name.append(service_name)
+            service_status.append(res5)
+            service_status_ip.append(service_ip[4])
+            service_status_name.append(service_name)
+            # print("@@@@@@@@@@@@@@@@@@@",service_name,service_ip)            
+            # print('^^^^^^^^^',service_status,service_status_ip,service_status_name)           
+   
+ 
+    op =  zip(service_status_name, service_status_ip, service_status)
+    # print("-------------------------")
+    # print(service_status)
+    # print(service_status_ip)
+    # print(service_status_name)
+    print(op)
+    cc = list(op)
+    # print(cc)
+    lengthofservice = len(WebB1)
+    finalpass = np.reshape(cc,(lengthofservice,5,3))
+    # print(finalpass)
+ 
+    context = {       
+        'data':data,   
+        'service_status':service_status,   
+        'service_status_ip':service_status_ip,
+        'service_status_name':service_status_name,
+        'WebB1':WebB1,  
+        'aaaa' : op,  
+        'finalpass' : finalpass,  
+        
+    }     
+    return render(request, 'pbx.html',context)
+ 
+
+
+def web(request):
+    print("+++++++++++++++++WEB REQUEST+++++++++++++++++++++++++++++++++++++++++++++++++++++")
+    WebB1 = WebBeta1.objects.all().values()   
+    # print("------------------Query set output --------------------")    
+    # print(WebB1)    
+    # Converted Queryset obj to list
+    i = 0
+    data = []
+    for row in WebB1:
+        while i < len(WebB1):
+            tmp = list((WebB1[i]).values())
+            i = i + 1
+            data.append(tmp)
+    # print("\n\n ------------Converted Queryset obj to list WEB OUTPUT -------------")
+    # print(data)
     # Assigned service data(status,ip,servicename)  into 3 list accordingly
     counter1 = 0    #  number of object /service in WebB1
     service_status = []
@@ -376,9 +431,12 @@ def update_openssl(passing_url):
     resp=requests.get(passing_url)
     if resp.status_code==200:
         soup=BeautifulSoup(resp.text,'html.parser')        
-        l=soup.find("table",{"class":"newsflash"})       
-        m = l.findAll("tr")[4]
-        return(m.text)           
+        l=soup.find("div",{"class":"blog-index"})
+        m = l.findAll("table")[0]
+        n = m.findAll("td")[6]        
+        o = m.findAll("tr")[2]        
+        p = o.findAll("td")[2]       
+        return(p.text)           
     else:
         return(resp.status_code) 
           
@@ -388,7 +446,7 @@ def update_php(passing_url):
     if resp.status_code==200:      
         soup=BeautifulSoup(resp.text,'html.parser')        
         l=soup.find("section",{"id":"layout-content"})
-        m = l.findAll("h3")[2]
+        m = l.findAll("h3")[0]
         return(m.text)           
     else:
         return(resp.status_code) 

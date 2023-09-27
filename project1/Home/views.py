@@ -4,7 +4,7 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from datetime import date, datetime
-from Home.models import WebBeta1, WebBeta2, WebBeta3,WebBeta4,NewUpdateInfo, RRFImage
+from Home.models import WebBeta1, WebBeta2, WebBeta3, WebBeta4, NewUpdateInfo, RRFImage, IPTable
 from django.contrib import messages
 import requests
 from requests.auth import HTTPBasicAuth
@@ -15,6 +15,10 @@ import numpy as np
 from bs4 import BeautifulSoup
 import subprocess
 from datetime import date
+import requests
+import json
+from requests.auth import HTTPBasicAuth
+from requests.exceptions import RequestException
 import time
 import datetime
 
@@ -136,24 +140,36 @@ def updaterecordNewUpdateInfo(request, id):
 # ----------------------------------------------------end----
 
 def about(request):
-    # Streamsbeta1obj =  list(WebBeta1.objects.values_list('service_name','ip1','ip2','ip3','ip4'))
-    # Streamsbeta1obj =  WebBeta1.objects.filter(service_name='Streams').values()
-    Streamsbeta1 =  list(WebBeta1.objects.filter(service_name='Streams').values())
-    Streamsbeta2 =  list(WebBeta2.objects.filter(service_name='Streams').values())
-    Admin5beta1 =  list(WebBeta1.objects.filter(service_name='Admin5').values())
-    print("$$$$$$$$$$$",Streamsbeta1)  
-    for i in  Streamsbeta1:
-        print(i['service_name'])
-    print("-------------------------------------------") 
-    # print(type(Streamsbeta1)) // list  
-    print(Streamsbeta1[0])      
- 
+    iptable_objs = IPTable.objects.filter(service_name="IPTables")
+    base_url = "http://nagios.beta-wspbx.com/nagios/cgi-bin/statusjson.cgi?query=service"
+
+    url_info_list = []  # Create an empty list to store URL and info
+
+    for iptable_obj in iptable_objs:
+        service_name = iptable_obj.service_name
+        ip1 = iptable_obj.ip1
+
+        # Use the values from each object to construct the URL
+        constructed_url = f"{base_url}&hostname={ip1}&servicedescription={service_name}"
+
+        # Now, you have the constructed URL for each matching object
+        print(constructed_url)
+        test = webnagios(constructed_url)
+        print(service_name, ip1, test)
+
+        # Append the URL and info to the list
+        url_info_list.append({
+            'service_name': service_name,
+            'ip1': ip1,
+            'test_result': test,
+        })
+        
+        print("-----")  
+
     context = {
-        'Streamsbeta1':Streamsbeta1,
-        'Streamsbeta2':Streamsbeta2,  
-        'Admin5beta1':Admin5beta1,        
+        'url_info_list': url_info_list,  # Pass the list in the context
     }
-    return render(request,'about.html',context)
+    return render(request, 'about.html', context)
 
 def services(request):
    build1=request.GET.get('buildno')
@@ -381,34 +397,33 @@ def web(request):
     # return render(request, 'web.html',{'result_streams178':result_streams178,'result_streams183':result_streams183,'result_streams185':result_streams185})
 
 # ------------------------- shubham --------------------------------------------------------------------------------------------------------------------
-def webnagios(passing_url):    
-    request_url = passing_url
-    # print("\n\n -----------  webnagios  function    --------------------    ")
-    print(passing_url)
-    # request_url = 'http://nagios.beta-wspbx.com/nagios/cgi-bin/statusjson.cgi?query=service&hostname=10.30.48.183&servicedescription=Streams'
-    username = 'nagiosadmin'
-    password = 'Nagios@beta'
-    session = requests.Session()
-    request = session.get(request_url, auth=HTTPBasicAuth(username,password), verify=False) 
-    data_json = json.loads(request.text)   
-    # print("----------------------------")
-    # print(data_json['data']['service']['plugin_output'])
-    
-    string = data_json['data']['service']['plugin_output']
-    # print("search string is " + string)
-    sub_str ="OK" 
-    sub_str1 ="ok" 
-   
-    if (string.find(sub_str) != -1) or (string.find(sub_str1) != -1):
-        # print("function-webnagios :Yes")
-        flag = "Running"
-        print("function-webnagios : yes",passing_url)
-        # print("----Running test here ----",string)
-        return flag
-    else:      
-        print(" \n service not running ---------",passing_url , string)       
-        flag = "Not Running" 
-        return flag      
+def webnagios(passing_url):
+    try:
+        request_url = passing_url
+        username = 'nagiosadmin'
+        password = 'Nagios@beta'
+        session = requests.Session()
+        request = session.get(request_url, auth=HTTPBasicAuth(username, password), verify=False)
+        request.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
+
+        data_json = json.loads(request.text)
+        plugin_output = data_json['data']['service']['plugin_output']
+
+        sub_str = "OK"
+        sub_str1 = "ok"
+
+        if (plugin_output.lower().find(sub_str.lower()) != -1) or (plugin_output.lower().find(sub_str1.lower()) != -1):
+            return "Running"
+        else:
+            return "Not Running"
+
+    except RequestException as e:
+        # Handle the request exception (e.g., incorrect URL, network issues)
+        return f"Error: {e}"
+
+    except (KeyError, json.JSONDecodeError) as e:
+        # Handle KeyError (missing keys in the JSON response) or JSON decoding errors
+        return f"Error parsing JSON response: {e}"      
  
                 
 def UrlReturn(service_name,instance_ip):

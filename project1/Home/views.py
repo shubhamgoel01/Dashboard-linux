@@ -143,7 +143,8 @@ def IPTables(request):
     iptable_objs = IPTable.objects.filter(service_name="IPTables")
     base_url = "http://nagios.beta-wspbx.com/nagios/cgi-bin/statusjson.cgi?query=service"
 
-    url_info_list = []  # Create an empty list to store URL and info
+    url_info_list_run = []  # Create an empty list to store URL and info
+    url_info_list_nrun = []  # Create an empty list to store URL and info
 
     for iptable_obj in iptable_objs:
         service_name = iptable_obj.service_name
@@ -153,21 +154,18 @@ def IPTables(request):
         constructed_url = f"{base_url}&hostname={ip1}&servicedescription={service_name}"
 
         # Now, you have the constructed URL for each matching object
-        print(constructed_url)
+        # print(constructed_url)
         test = webnagios(constructed_url)
-        print(service_name, ip1, test)
 
-        # Append the URL and info to the list
-        url_info_list.append({
-            'service_name': service_name,
-            'ip1': ip1,
-            'test_result': test,
-        })
-        
-        print("-----")  
-
+        if test == 'Running':            
+            # Append the URL and info to the list
+            url_info_list_run.append(ip1)
+        else:
+            url_info_list_nrun.append(ip1)
+  
     context = {
-        'url_info_list': url_info_list,  # Pass the list in the context
+        'url_info_list_run': url_info_list_run,  # Pass the list in the context
+        'url_info_list_nrun': url_info_list_nrun,  # Pass the list in the context
     }
     return render(request, 'IPTables.html', context)
 

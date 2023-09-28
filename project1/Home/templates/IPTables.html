@@ -1,35 +1,39 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 
 {% block title %}IPTables{% endblock title %}
+
 {% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>IPTables Running</h2>
+            <ol>
+                {% for opp in url_info_list_run %}
+                    <li><span style="background-color: green; color: white;">{{ opp }} is Running</span></li>
+                {% endfor %}
+            </ol>
+        </div>
+        <div class="col-md-6">
+            <h2>IPTables Not Running</h2>
+            <ol>
+                {% for opp in url_info_list_nrun %}
+                    <li><span style="background-color: red; color: white;">{{ opp }} is Not Running</span></li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+</div>
 
-{% comment %} Hi Shubham - web services list
-class ser_run defined in base template {% endcomment %}
-<div class='container'>
-    <table class="table">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col">IPTables Status</th>
-         </tr>
-      </thead>
-      <tbody>
-        {% for opp in url_info_list %}
-        <tr>
-          <th scope="row">         
-    
-            {% if opp.test_result == 'Running' %}
-            <div class="ser_run">{{ opp.ip1 }} is Running</div>
-
-            {% else %}
-            <div class="ser_nrun">{{ opp.ip1 }} is Not Running</div>
-            {% endif %} 
-            </th>
-  
-           
-          </tr>  
-          {% endfor %}        
-      </tbody>
-    </table>
-  </div>
+{% comment %} The page will be reloaded in 10 minute. {% endcomment %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js">
+</script>
+ 
+<script type="text/javascript">
+  $(document).ready(function () {
+    setTimeout(function () {
+      location.reload(true);
+    }, 600000);
+  });
+</script>
 
 {% endblock body %}

@@ -10,6 +10,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from urllib.request import urlopen
 import json
+import re
 from django.urls import reverse
 import numpy as np
 from bs4 import BeautifulSoup

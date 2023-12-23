@@ -3,6 +3,18 @@
 {% block title %}UPDATE{% endblock title %}
 
 {% block body %}
+<style>
+    .blink {
+        animation: blinker 3s linear infinite;
+    }
+
+    @keyframes blinker {
+        50% {
+            background-color: red;
+        }
+    }
+</style>
+
 <div class="container">
     <h1>NEW UPDATE</h1>
     <strong>HTTPD : </strong>{{ result_httpd }} </br>
@@ -32,7 +44,7 @@
             <td><a href="checkupdate/update/{{ x.id }}">{{ forloop.counter }}</a></td>
             <td>{{ x.name }}</td>
             {% if x.beta not in result_httpd and x.beta not in result_openssl and x.beta not in result_php and x.beta not in result_Hadoop and x.beta not in result_ZooKeeper and x.beta not in result_Spark and x.beta not in result_tomcat and x.beta not in result_java and x.beta not in result_activemq %}
-                <td style="background-color: red;"><strong>{{ x.beta }}</strong></td>
+                <td class="blink">{{ x.beta }}</td>
             {% else %}
                 <td>{{ x.beta }}</td>
             {% endif %}

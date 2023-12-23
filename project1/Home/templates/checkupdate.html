@@ -32,13 +32,12 @@
         </tr>
     <thead class="thead-dark">
     {% for x in objNewUpdateInfo %}
-    <tr>    
-    {% comment %} <td><a href="checkupdate/update/{{ x.id }}">{{ x.id }}</a></td> {% endcomment %}
-    <td><a href="checkupdate/update/{{ x.id }}">{{ forloop.counter }}</a></td>
-    <td>{{ x.name }}</td>
-    <td>{{ x.beta }}</td>
-    <td>{{ x.production }}</td>       
-    <td><a href="delete/{{ x.id }}">delete</a></td>      
+    <tr{% if x.beta not in result_php %} style="background-color: red;"{% endif %}>   
+        <td><a href="checkupdate/update/{{ x.id }}">{{ forloop.counter }}</a></td>
+        <td>{{ x.name }}</td>
+        <td>{{ x.beta }}</td>
+        <td>{{ x.production }}</td>       
+        <td><a href="delete/{{ x.id }}">delete</a></td>      
     </tr>
     {% endfor %}
 </table>

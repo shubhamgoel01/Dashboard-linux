@@ -75,7 +75,7 @@ def output(request):
 # --------------------------------------New ---------------
 def checkupdate(request):  
     result_httpd = update_httpd("https://httpd.apache.org/download.cgi")
-    result_openssl = update_openssl("https://www.openssl.org/source/")
+    result_openssl = update_openssl("https://www.openssl.org/")
     result_php = update_php("https://www.php.net/")
     result_Hadoop = update_Hadoop("https://hadoop.apache.org/release.html")
     result_ZooKeeper = update_ZooKeeper("https://zookeeper.apache.org/releases.html")
@@ -441,18 +441,29 @@ def update_httpd(passing_url):
         # print('Error: %s' % resp.status_code)  
         
 # ---------------OpenSSL---------------       
-def update_openssl(passing_url):   
-    resp=requests.get(passing_url)
-    if resp.status_code==200:
-        soup=BeautifulSoup(resp.text,'html.parser')        
-        l=soup.find("div",{"class":"blog-index"})
-        m = l.findAll("table")[0]
-        n = m.findAll("td")[6]        
-        o = m.findAll("tr")[2]        
-        p = o.findAll("td")[2]       
-        return(p.text)           
+def update_openssl(url):
+    # Send a GET request to the URL
+    response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse the HTML content of the page
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Define the version string pattern
+        version_pattern = re.compile(r'OpenSSL\s+3\.0\.\d+')
+
+        # Find all occurrences of the version string pattern in the page
+        occurrences = soup.body(text=version_pattern.search)
+
+        # If there are occurrences, return the first one
+        if occurrences:
+            latest_version = occurrences[0].strip()
+            return latest_version
+        else:
+            return "No version strings matching 'OpenSSL 3.0.x' found on the OpenSSL website."
     else:
-        return(resp.status_code) 
+        return f"Failed to retrieve the webpage. Status code: {response.status_code}"
           
   
 def update_php(url):

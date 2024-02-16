@@ -1,22 +1,32 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 
-def update():	
-    httpdURL='https://www.openssl.org/source/'
-    resp=requests.get(httpdURL)
-    if resp.status_code==200:
-        print("Successfully opened the web page")
-        print("The news are as follow :-\n")
-        
-        soup=BeautifulSoup(resp.text,'html.parser')        
-        l=soup.find("div",{"class":"blog-index"})
-        m = l.findAll("table")[0]
-        n = m.findAll("td")[6]        
-        o = m.findAll("tr")[2]        
-        p = o.findAll("td")[2]       
-        return(p.text)          
+def update_openssl(url):
+    # Send a GET request to the URL
+    response = requests.get(url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        # Parse the HTML content of the page
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Define the version string pattern
+        version_pattern = re.compile(r'OpenSSL\s+3\.0\.\d+')
+
+        # Find all occurrences of the version string pattern in the page
+        occurrences = soup.body(text=version_pattern.search)
+
+        # If there are occurrences, return the first one
+        if occurrences:
+            latest_version = occurrences[0].strip()
+            return latest_version
+        else:
+            return "No version strings matching 'OpenSSL 3.0.x' found on the OpenSSL website."
     else:
-        print('Error: %s' % resp.status_code)   
-        
-	
-update()
+        return f"Failed to retrieve the webpage. Status code: {response.status_code}"
+
+# Example usage:
+url = "https://www.openssl.org/"
+result_openssl = update_openssl(url)
+print(result_openssl)

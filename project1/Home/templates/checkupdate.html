@@ -3,48 +3,57 @@
 {% block title %}UPDATE{% endblock title %}
 
 {% block body %}
+<style>
+    .blink {
+        animation: blinker 3s linear infinite;
+    }
+
+    @keyframes blinker {
+        50% {
+            background-color: red;
+        }
+    }
+</style>
+
 <div class="container">
-{% comment %} https://www.geeksforgeeks.org/reading-selected-webpage-content-using-python-web-scraping/ {% endcomment %}
-<h1>NEW UPDATE</h1>
-<strong>HTTPD : </strong>{{result_httpd}} </br>
-<strong>OpenSSL : </strong>{{result_openssl}} </br>
-<strong>PHP : </strong>{{result_php}} </br>
-<strong>Hadoop : </strong>{{result_Hadoop}} </br>
-<strong>ZooKeeper : </strong>{{result_ZooKeeper}} </br>
-<strong>Apache Spark : </strong>{{result_Spark}} </br>
-<strong>Tomcat : </strong>{{result_tomcat}} </br>
-<strong>JAVA : </strong>{{result_java}} </br>
-<strong>ActiveMQ : </strong>{{result_activemq}} </br>
+    <h1>NEW UPDATE</h1>
+    <strong>HTTPD : </strong>{{ result_httpd }} </br>
+    <strong>OpenSSL : </strong>{{ result_openssl }} </br>
+    <strong>PHP : </strong>{{ result_php }} </br>
+    <strong>Hadoop : </strong>{{ result_Hadoop }} </br>
+    <strong>ZooKeeper : </strong>{{ result_ZooKeeper }} </br>
+    <strong>Apache Spark : </strong>{{ result_Spark }} </br>
+    <strong>Tomcat : </strong>{{ result_tomcat }} </br>
+    <strong>JAVA : </strong>{{ result_java }} </br>
+    <strong>ActiveMQ : </strong>{{ result_activemq }} </br>
 
+    </br></br>
 
-{% comment %} --------------------- {% endcomment %}
-
-</br></br>
-
-<table border="1" class="table">
-    <thead class="thead-dark">
-        <tr>    
-            <th>id</th>
-            <th>Name</th>
-            <th>Beta</th>
-            <th>Production</th>       
-            <th>Delete</th>       
+    <table border="1" class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>id</th>
+                <th>Name</th>
+                <th>Beta</th>
+                <th>Production</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        {% for x in objNewUpdateInfo %}
+        <tr>
+            <td><a href="checkupdate/update/{{ x.id }}">{{ forloop.counter }}</a></td>
+            <td>{{ x.name }}</td>
+            {% if x.beta not in result_httpd and x.beta not in result_openssl and x.beta not in result_php and x.beta not in result_Hadoop and x.beta not in result_ZooKeeper and x.beta not in result_Spark and x.beta not in result_tomcat and x.beta not in result_java and x.beta not in result_activemq %}
+                <td class="blink">{{ x.beta }}</td>
+            {% else %}
+                <td>{{ x.beta }}</td>
+            {% endif %}
+            <td>{{ x.production }}</td>
+            <td><a href="delete/{{ x.id }}">delete</a></td>
         </tr>
-    <thead class="thead-dark">
-    {% for x in objNewUpdateInfo %}
-    <tr>    
-    {% comment %} <td><a href="checkupdate/update/{{ x.id }}">{{ x.id }}</a></td> {% endcomment %}
-    <td><a href="checkupdate/update/{{ x.id }}">{{ forloop.counter }}</a></td>
-    <td>{{ x.name }}</td>
-    <td>{{ x.beta }}</td>
-    <td>{{ x.production }}</td>       
-    <td><a href="delete/{{ x.id }}">delete</a></td>      
-    </tr>
-    {% endfor %}
-</table>
+        {% endfor %}
+    </table>
 
-</br> </br><p><a href="checkupdate/add/">Add record</a></p>
-
-
+    </br> </br><p><a href="checkupdate/add/">Add record</a></p>
 </div>
 {% endblock body %}

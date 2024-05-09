@@ -28,41 +28,41 @@ import datetime
 
 def index(request):
     # List of certificate files with their full paths
-    # cert_files = {
-    #     "cfgtre.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/cfgtre.beta-wspbx.com.crt",
-    #     "fwdin.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/fwdin.beta-wspbx.com.crt",
-    #     "mp88.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/mp88.beta-wspbx.com.crt",
-    #     "p101.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p101.beta-wspbx.com.crt",
-    #     "p103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p103.beta-wspbx.com.crt",
-    #     "p104.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p104.beta-wspbx.com.crt",
-    #     "p107.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p107.beta-wspbx.com.crt",
-    #     "p201.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p201.beta-wspbx.com.crt",
-    #     "p801.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p801.beta-wspbx.com.crt",
-    #     "SANp103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/SANp103.beta-wspbx.com.crt",
-    #     "sms-wspbx-com.crt": "/opt/Dashboard-linux/project1/extra/sms-wspbx-com.crt",
-    #     "wild.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/wild.beta-wspbx.com.crt",
-    #     "clients.crt": "/opt/Dashboard-linux/project1/extra/clients.crt"
-    # }
+    cert_files = {
+        "cfgtre.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/cfgtre.beta-wspbx.com.crt",
+        "fwdin.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/fwdin.beta-wspbx.com.crt",
+        "mp88.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/mp88.beta-wspbx.com.crt",
+        "p101.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p101.beta-wspbx.com.crt",
+        "p103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p103.beta-wspbx.com.crt",
+        "p104.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p104.beta-wspbx.com.crt",
+        "p107.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p107.beta-wspbx.com.crt",
+        "p201.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p201.beta-wspbx.com.crt",
+        "p801.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p801.beta-wspbx.com.crt",
+        "SANp103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/SANp103.beta-wspbx.com.crt",
+        "sms-wspbx-com.crt": "/opt/Dashboard-linux/project1/extra/sms-wspbx-com.crt",
+        "wild.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/wild.beta-wspbx.com.crt",
+        "clients.crt": "/opt/Dashboard-linux/project1/extra/clients.crt"
+    }
 
-    # # String to store certificate expiry information
-    # expiry_info = ""
+    # String to store certificate expiry information
+    expiry_info = ""
 
-    # # Iterate through each certificate file
-    # for cert_name, cert_path in cert_files.items():
-    #     # Run shell command to get the end date of the certificate
-    #     end_date_command = f"/usr/bin/openssl x509 -enddate -noout -in {cert_path}"
-    #     end_date_result = subprocess.check_output(end_date_command, shell=True)
-    #     end_date_string = end_date_result.decode('utf-8').strip().split('=')[1]
+    # Iterate through each certificate file
+    for cert_name, cert_path in cert_files.items():
+        # Run shell command to get the end date of the certificate
+        end_date_command = f"/usr/bin/openssl x509 -enddate -noout -in {cert_path}"
+        end_date_result = subprocess.check_output(end_date_command, shell=True)
+        end_date_string = end_date_result.decode('utf-8').strip().split('=')[1]
 
-    #     # Parse the end date string to a datetime object
-    #     end_date = datetime.datetime.strptime(end_date_string, '%b %d %H:%M:%S %Y %Z')
+        # Parse the end date string to a datetime object
+        end_date = datetime.datetime.strptime(end_date_string, '%b %d %H:%M:%S %Y %Z')
 
-    #     # Calculate the number of days left until expiration
-    #     days_left = (end_date - datetime.datetime.now()).days
+        # Calculate the number of days left until expiration
+        days_left = (end_date - datetime.datetime.now()).days
 
-    #     # Format the certificate expiry information and append to the output string
-    #     expiry_info += f"{cert_name}: {days_left} days left until expiration, expiry date: {end_date.strftime('%Y-%m-%d %H:%M:%S %Z')}\n"
-    expiry_info = 5
+        # Format the certificate expiry information and append to the output string
+        expiry_info += f"{cert_name}: {days_left} days left until expiration, expiry date: {end_date.strftime('%Y-%m-%d %H:%M:%S %Z')}\n"
+
     data = RRFImage.objects.all()
     context = {
              'expiry_info':expiry_info,

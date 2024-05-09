@@ -27,37 +27,45 @@ import datetime
 
 
 def index(request):
-    crt_day = " /usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk '{print $2}'"
-    crt_day_result = subprocess.check_output(crt_day, shell=True)
-    crt_day_1 = crt_day_result.decode('utf-8').rstrip()
-    crt_year = "/usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk '{print $4}'"  # Replace with your desired command
-    crt_year_result = subprocess.check_output(crt_year, shell=True)
-    crt_year_1 = crt_year_result.decode('utf-8').rstrip()
-    month_dict = {'Jan': '1', 'Feb': '2', 'Mar': '3', 'Apr': '4', 'May': '5', 'Jun': '6', 'Jul': '7', 'Aug': '8', 'Sep': '9', 'Oct': '10', 'Nov': '11', 'Dec': '12'}
-    crt_month = "/usr/bin/openssl x509 -enddate -noout -in /opt/Dashboard-linux/project1/extra/clients.crt  | awk -F '=' '{print $2}' | cut -d '2' -f1 "  # Replace with your desired command
-    crt_month_result = subprocess.check_output(crt_month, shell=True)
-    crt_month_tmp = crt_month_result.decode('utf-8').rstrip()
-    if crt_month_tmp in month_dict.keys():
-        crt_month_1 = month_dict[crt_month_tmp]
-    else:
-        print("issue in crt_month_tmp")
+    # List of certificate files with their full paths
+    cert_files = {
+        "cfgtre.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/cfgtre.beta-wspbx.com.crt",
+        "fwdin.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/fwdin.beta-wspbx.com.crt",
+        "mp88.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/mp88.beta-wspbx.com.crt",
+        "p101.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p101.beta-wspbx.com.crt",
+        "p103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p103.beta-wspbx.com.crt",
+        "p104.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p104.beta-wspbx.com.crt",
+        "p107.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p107.beta-wspbx.com.crt",
+        "p201.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p201.beta-wspbx.com.crt",
+        "p801.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/p801.beta-wspbx.com.crt",
+        "SANp103.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/SANp103.beta-wspbx.com.crt",
+        "sms-wspbx-com.crt": "/opt/Dashboard-linux/project1/extra/sms-wspbx-com.crt",
+        "wild.beta-wspbx.com.crt": "/opt/Dashboard-linux/project1/extra/wild.beta-wspbx.com.crt",
+        "clients.crt": "/opt/Dashboard-linux/project1/extra/clients.crt"
+    }
 
-    m1 = int(crt_month_1)
-    d1 = int(crt_day_1)
-    y1 = int(crt_year_1)
-    current_time = datetime.datetime.now()
-    crt_year_2 = current_time.year
-    crt_month_2 = current_time.month
-    crt_day_2 = current_time.day
+    # String to store certificate expiry information
+    expiry_info = ""
 
-    date1 = date(y1, m1, d1)
-    date2 = date(crt_year_2, crt_month_2, crt_day_2)
-    c = (date1-date2).days
-    print("days_left",c)
+    # Iterate through each certificate file
+    for cert_name, cert_path in cert_files.items():
+        # Run shell command to get the end date of the certificate
+        end_date_command = f"/usr/bin/openssl x509 -enddate -noout -in {cert_path}"
+        end_date_result = subprocess.check_output(end_date_command, shell=True)
+        end_date_string = end_date_result.decode('utf-8').strip().split('=')[1]
+
+        # Parse the end date string to a datetime object
+        end_date = datetime.datetime.strptime(end_date_string, '%b %d %H:%M:%S %Y %Z')
+
+        # Calculate the number of days left until expiration
+        days_left = (end_date - datetime.datetime.now()).days
+
+        # Format the certificate expiry information and append to the output string
+        expiry_info += f"{cert_name}: {days_left} days left until expiration, expiry date: {end_date.strftime('%Y-%m-%d %H:%M:%S %Z')}\n"
 
     data = RRFImage.objects.all()
     context = {
-             'day_left':c,
+             'expiry_info':expiry_info,
              'data' : data
     }
     return render(request,'index.html',context)

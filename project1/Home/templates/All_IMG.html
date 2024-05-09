@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock title %}
+
+{% block body %}<br><br>
+<div class="container">
+
+
+ {% for x in img %}
+ <p>IMG INFO : <a href="{{ x.photo.url }}">{{ x.title }} </a> <br>
+ <div class="col-md-4">
+     <a href="{{ x.photo.url }}">
+       <img src="{{ x.photo.url }}" alt="Lights" style="width:100%">
+     </a>             
+ </div>
+ {% endfor %}
+
+
+
+{% endblock body %}

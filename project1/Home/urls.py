@@ -11,6 +11,7 @@ urlpatterns = [
     path("web", views.web, name='web' ),
     path("pbx", views.pbx, name='pbx' ),
     path("output", views.output, name='output' ),
+    path("img", views.images, name='img' ),
     path("checkupdate", views.checkupdate, name='checkupdate' ),
     path("checkupdate/add/", views.addinNewUpdateInfo, name='addnewupdateinfo' ),    
     path("checkupdate/add/addrecord/", views.addrecordinNewUpdateInfo, name='addrecordnewupdateinfo' ),    

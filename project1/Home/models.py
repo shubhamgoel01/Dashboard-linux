@@ -59,6 +59,10 @@ class RRFImage(models.Model):
     title = models.CharField(max_length=100)
     photo = models.ImageField(upload_to='pics')
     
+class All_IMG(models.Model):
+    title = models.CharField(max_length=20)
+    photo = models.ImageField(upload_to='pics')
+    
 
 class IPTable(models.Model):
     service_name = models.CharField(max_length=200)

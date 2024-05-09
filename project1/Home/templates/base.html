@@ -48,10 +48,6 @@
                 <a class="nav-link active" href="/IPTables" target="_blank">IPTables</a>
               </li>  
 
-
-
-
-
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Nagios
@@ -109,9 +105,17 @@
               <li class="nav-item">
                 <a class="nav-link active" href="http://192.168.2.17/books/" target="_blank">KB</a>
               </li>  
-              <li class="nav-item">
-                <a class="nav-link active" href="http://192.168.1.243/wsvn/" target="_blank" >WSVN</a>
-              </li>  
+		    
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  WSVN
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="http://192.168.1.243/Release/" target="_blank">Relase</a></li>
+                  <li><a class="dropdown-item" href="http://192.168.1.243/services/" target="_blank">Services</a></li>
+                </ul>
+              </li> 
+		    
               {% comment %} <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/services">Services</a>
               </li>    {% endcomment %}
@@ -146,8 +150,7 @@
                   Nessus
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="http://208.77.7.44:9000/" target="_blank">Nessus-ALL</a></li>
-		  <li><a class="dropdown-item" href="http://208.77.7.44:9001/" target="_blank">Nessus-BETA</a></li>
+                  <li><a class="dropdown-item" href="http://208.77.7.44:9001/" target="_blank">Nessus-BETA</a></li>
                   <li><a class="dropdown-item" href="http://208.77.7.44:9002/" target="_blank">Nessus-DCE</a></li>
                   <li><a class="dropdown-item" href="http://208.77.7.44:9003/" target="_blank">Nessus-DCW</a></li>
                 </ul>

@@ -89,7 +89,7 @@ def output(request):
 # --------------------------------------New ---------------
 def checkupdate(request):  
     result_httpd = update_httpd("https://httpd.apache.org/download.cgi")
-    result_openssl = update_openssl("https://www.openssl.org/")
+    result_openssl = update_openssl("https://endoflife.date/openssl")
     result_php = update_php("https://www.php.net/")
     result_Hadoop = update_Hadoop("https://hadoop.apache.org/release.html")
     result_ZooKeeper = update_ZooKeeper("https://zookeeper.apache.org/releases.html")
@@ -465,7 +465,7 @@ def update_openssl(url):
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Define the version string pattern
-        version_pattern = re.compile(r'OpenSSL\s+3\.0\.\d+')
+        version_pattern = re.compile(r'3\.0\.\d+')
 
         # Find all occurrences of the version string pattern in the page
         occurrences = soup.body(text=version_pattern.search)

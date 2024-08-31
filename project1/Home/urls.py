@@ -18,6 +18,7 @@ urlpatterns = [
     path('delete/<int:id>', views.deleteinNewUpdateInfo, name='deleteinNewUpdateInfo'),
     path('checkupdate/update/<int:id>', views.updateinNewUpdateInfo, name='updateinNewUpdateInfo'),   
     path('checkupdate/update/updaterecord/<int:id>', views.updaterecordNewUpdateInfo, name='updaterecordinNewUpdateInfo'),
+    path("loading", views.loading, name='loading'),  # Add this line
     # ---------------sample 
   
 ]

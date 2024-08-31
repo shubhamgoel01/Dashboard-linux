@@ -190,6 +190,9 @@ def services(request):
    print(build1,build2)
    return render(request, 'services.html',{'build1':build1,'build2':build2})
 
+def loading(request):
+    return render(request, 'loading.html')
+
 def pbx(request):
     print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     WebB1 = WebBeta2.objects.all().values()   
